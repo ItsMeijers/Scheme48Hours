@@ -26,14 +26,17 @@ module Parser where
   showVal (Number i)       = show i
   showVal (Bool True)      = "#t"
   showVal (Bool False)     = "#f"
-  showVal (List xs)        = undefined -- TODO
-  showVal (DottedList h t) = undefined -- TODO
+  showVal (List xs)        = "(" ++ unwordsList xs ++ ")"
+  showVal (DottedList h t) = "(" ++ unwordsList h ++ " . " ++ showVal t ++ ")"
+
+  unwordsList :: [LispVal] -> String
+  unwordsList = unwords . map showVal
 
   -- | Reads an expression to a value
-  readExpr :: String -> String
+  readExpr :: String -> LispVal
   readExpr input = case parse parseExpr "lisp" input of
-    Left  err -> "No match: " ++ show err
-    Right val -> "Found value: " ++ show val
+    Left  err -> String $ "No match: " ++ show err
+    Right val -> val
 
   -- | Parses a single symbol, one of the characters of the String
   symbol :: Parser Char
@@ -43,8 +46,7 @@ module Parser where
   -- | TODO add full numeric tower : http://www.schemers.org/Documents/Standards/R5RS/HTML/r5rs-Z-H-9.html#%_sec_6.2.1
   parseExpr :: Parser LispVal
   parseExpr = parseQuoted
-           <|> parseChar
-           <|> parseAtom
+           <|> (try parseChar <|> parseAtom)
            <|> parseString
            <|> parseNumber
            -- <|> parsefloat
