@@ -157,7 +157,7 @@ module Parser where
   -- | TODO needs fixing fails at parsereadRadixVal
   parseFloat :: Parser LispVal
   parseFloat = do
-    before <- many digit
+    before <- many1 digit
     dot    <- char '.'
-    after  <- many digit
+    after  <- many1 digit
     return (readRadixVal readFloat Float (before ++ [dot] ++ after))
