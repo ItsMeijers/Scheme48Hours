@@ -28,15 +28,10 @@ module Parser where
   showVal (Bool False)     = "#f"
   showVal (List xs)        = "(" ++ unwordsList xs ++ ")"
   showVal (DottedList h t) = "(" ++ unwordsList h ++ " . " ++ showVal t ++ ")"
+  showVal (Character c)    = show c
 
   unwordsList :: [LispVal] -> String
   unwordsList = unwords . map showVal
-
-  -- | Reads an expression to a value
-  readExpr :: String -> LispVal
-  readExpr input = case parse parseExpr "lisp" input of
-    Left  err -> String $ "No match: " ++ show err
-    Right val -> val
 
   -- | Parses a single symbol, one of the characters of the String
   symbol :: Parser Char
